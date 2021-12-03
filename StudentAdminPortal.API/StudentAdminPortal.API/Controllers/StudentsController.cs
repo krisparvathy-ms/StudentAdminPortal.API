@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace StudentAdminPortal.API.Controllers
 {
-    [ApiController]   
+    [ApiController]
     public class StudentsController : Controller
     {
         private readonly IStudentRepository studentRepository;
         private readonly IMapper mapper;
 
-        public StudentsController(IStudentRepository studentRepository,IMapper mapper)
+        public StudentsController(IStudentRepository studentRepository, IMapper mapper)
         {
             this.studentRepository = studentRepository;
             this.mapper = mapper;
@@ -74,5 +74,24 @@ namespace StudentAdminPortal.API.Controllers
             }
             return Ok(mapper.Map<Student>(student));
         }
+
+        [HttpPut]
+        [Route("[controller]/{studentId:guid}")]
+        public async Task<IActionResult> UpdateStudentAsync([FromRoute] Guid studentId, [FromBody] UpdateStudentRequest request)
+        {
+            if (await studentRepository.Exists(studentId))
+            {
+                //Update Details
+                var updatedStudent = await studentRepository.UpdateStudent(studentId, mapper.Map<DataModels.Student>(request));
+
+                if (updatedStudent != null)
+                {
+                    return Ok(mapper.Map<Student>(updatedStudent));
+                }
+            }
+            return NotFound();
+
+        }
+
     }
 }
