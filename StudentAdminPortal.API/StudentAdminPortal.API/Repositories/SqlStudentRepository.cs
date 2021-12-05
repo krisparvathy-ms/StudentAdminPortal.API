@@ -57,6 +57,18 @@ namespace StudentAdminPortal.API.Repositories
             return await context.Student.Include(nameof(Gender)).Include(nameof(Address)).ToListAsync();
         }
 
+        public async Task<bool> UpdateProfileImage(Guid studentId, string profileImageUrl)
+        {
+            var student = await GetStudentAsync(studentId);
+            if (student != null)
+            {
+                student.ProfileImageUrl = profileImageUrl;
+                await context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<Student> UpdateStudent(Guid studentId, Student request)
         {
             var existingStudent =await  GetStudentAsync(studentId);
@@ -79,5 +91,6 @@ namespace StudentAdminPortal.API.Repositories
             return null; 
 
         }
+
     }
 }
